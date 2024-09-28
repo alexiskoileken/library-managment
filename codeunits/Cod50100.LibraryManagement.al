@@ -171,6 +171,25 @@ codeunit 50100 "Library Management"
         end;
     end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.", 'OnRejectApprovalRequest', '', false, false)]
+    local procedure OnRejectApprovalRequest(var ApprovalEntry: Record "Approval Entry")
+    var
+        RecRef: RecordRef;
+        BookLending: Record "Book Lending";
+        BookLendingLn: record "Book Lending Line";
+
+    begin
+        case ApprovalEntry."Table ID" of
+            DataBase::"Book Lending":
+                begin
+                    if BookLending.Get(ApprovalEntry."Document No.") then begin
+                        BookLending.Validate(Status, BookLending.Status::Rejected);
+                        BookLending.Modify(true);
+                    end;
+                end;
+        end;
+    end;
+
     var
         WorkflowMgt: Codeunit "Workflow Management";
         NoWorkflowEnabledErr:
