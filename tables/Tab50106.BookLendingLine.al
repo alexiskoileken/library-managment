@@ -42,7 +42,7 @@ table 50106 "Book Lending Line"
         }
         field(5; Status; option)
         {
-            OptionMembers = Available,Booked,Approved,"Out of Order";
+            OptionMembers = Available,Booked,Approved,Returned;
             Editable = false;
         }
     }

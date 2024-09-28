@@ -25,12 +25,7 @@ page 50110 "Book Lending Line"
                 field(ISNB; Rec.ISNB)
                 {
                     ToolTip = 'Specifies the value of the ISNB field.', Comment = '%';
-                }
-                field(Status; Rec.Status)
-                {
-
-                }
-
+                }4
             }
         }
     }

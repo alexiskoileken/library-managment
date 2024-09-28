@@ -103,11 +103,84 @@ codeunit 50100 "Library Management"
     end;
     // modifying the document state
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Workflow Response Handling", 'OnOpenDocument', '', false, false)]
+    local procedure OnOpenDocument(RecRef: RecordRef; Handled: Boolean)
+    Var
+        Book: Record Book;
+        BookLending: Record "Book Lending";
+    begin
+        case RecRef.number of
+            Database::"Book Lending":
+                begin
+                    RecRef.SetTable(BookLending);
+                    BookLending.Validate(Status, BookLending.status::Open);
+                    book.Reset();
+                    Book.SetRange(Status, book.Status::Available);
+                    book.Status := book.status::Available;
+                    BookLending.Modify(true);
+                    book.Modify(true);
+                    Handled := true;
+                end;
+
+        end;
+
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.", 'OnSetStatusToPendingApproval', '', false, false)]
+    local procedure OnSetStatusToPendingApproval(RecRef: RecordRef; var Variant: Variant; var IsHandled: Boolean)
+    var
+
+        BookLending: Record "Book Lending";
+    begin
+        case
+            RecRef.Number of
+            Database::"Book Lending":
+                begin
+                    RecRef.SetTable(BookLending);
+                    BookLending.Validate(Status, BookLending.Status::Pending);
+                    BookLending.Modify(true);
+
+                end;
+
+        end;
+    end;
+
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Workflow Response Handling", 'OnReleaseDocument', '', false, false)]
+    local procedure OnReleaseDocument(RecRef: RecordRef; var Handled: Boolean)
+    var
+        BookLending: Record "Book Lending";
+        BookLendingLn: record "Book Lending Line";
+
+    begin
+        case RecRef.Number of
+            DataBase::"Book Lending":
+                begin
+                    RecRef.SetTable(BookLending);
+                    BookLending.Validate(Status, BookLending.Status::Approved);
+                    BookLending.Modify(true);
+                    BookLendingLn.Reset();
+                    BookLendingLn.SetRange(Status, BookLendingLn.Status::Available);
+                    if BookLendingLn.FindSet() then begin
+                        repeat
+                            BookLendingLn.Status := BookLendingLn.Status::Approved;
+                            BookLendingLn.Modify(true);
+                        until BookLendingLn.Next() = 0;
+                        Handled := true;
+                    end;
+                end;
+        end;
+    end;
+
     var
         WorkflowMgt: Codeunit "Workflow Management";
-        NoWorkflowEnabledErr: Label 'No approval workflow for this record type is enabled.';
-        RUNWORKFLOWONSENDAPPROVALCODE: label 'RunWorkflowOnSend%1ForApprovalCode';
-        RUNWORKFLOWONCANCELAPPROVALCODE: label 'RunWorkflowOnSend%1ForApprovalCode';
-        SendForApprovalEventDescTxt: Label 'Approval of a %1 is requested.';
-        CancelForApprovalEventDescTxt: Label 'Approval of a %1 is Canceled.';
+        NoWorkflowEnabledErr:
+                Label 'No approval workflow for this record type is enabled.';
+        RUNWORKFLOWONSENDAPPROVALCODE:
+                label 'RunWorkflowOnSend%1ForApprovalCode';
+        RUNWORKFLOWONCANCELAPPROVALCODE:
+                label 'RunWorkflowOnSend%1ForApprovalCode';
+        SendForApprovalEventDescTxt:
+                Label 'Approval of a %1 is requested.';
+        CancelForApprovalEventDescTxt:
+                Label 'Approval of a %1 is Canceled.';
 }
