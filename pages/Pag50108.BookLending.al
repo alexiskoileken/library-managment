@@ -88,7 +88,7 @@ page 50108 "Book Lending"
                         RecRef: RecordRef;
                         LibraryMgt: Codeunit "Library Management";
                     begin
-                        RecRef.SetTable(Rec);
+                        RecRef.GetTable(Rec);
                         if not LibraryMgt.CheckApprovalsWorkflowEnabled(RecRef) then
                             LibraryMgt.OnSendForApproval(RecRef);
                     end;
@@ -108,7 +108,7 @@ page 50108 "Book Lending"
                         RecRef: RecordRef;
                         LibraryMgt: Codeunit "Library Management";
                     begin
-                        RecRef.SetTable(Rec);
+                        RecRef.GetTable(rec);
                         LibraryMgt.OnCancelForApproval(RecRef);
                     end;
                 }
@@ -187,7 +187,6 @@ page 50108 "Book Lending"
                     ToolTip = 'View approval requests.';
                     Promoted = true;
                     PromotedCategory = New;
-                    Visible = HasApprovalEntries;
                     trigger OnAction()
                     begin
                         ApprovalsMgmt.OpenApprovalEntriesPage(Rec.RecordId);
