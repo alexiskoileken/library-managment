@@ -6,6 +6,7 @@ table 50105 "Book Lending"
     Caption = 'Book Lending';
     DataClassification = ToBeClassified;
     LookupPageId = "Book lendings";
+    DrillDownPageId = "Book Lending";
 
     fields
     {

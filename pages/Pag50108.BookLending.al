@@ -79,7 +79,7 @@ page 50108 "Book Lending"
                     Caption = 'Submit';
                     ApplicationArea = basic, suite;
                     Image = SendApprovalRequest;
-                    Tooltip = 'Request approval to change the record.';
+                    Tooltip = 'Request approval for the book to borrow.';
                     Promoted = true;
                     PromotedCategory = Process;
                     Visible = Not OpenApprovalEntriesExistCurrUser;
@@ -89,8 +89,8 @@ page 50108 "Book Lending"
                         LibraryMgt: Codeunit "Library Management";
                     begin
                         RecRef.GetTable(Rec);
-                        if not LibraryMgt.CheckApprovalsWorkflowEnabled(RecRef) then
-                            LibraryMgt.OnSendForApproval(RecRef);
+                        if LibraryMgt.CheckApprovalsWorkflowEnabled(RecRef) then
+                            LibraryMgt.OnSendWorkflowForApproval(RecRef);
                     end;
                 }
                 action(CancelApprovalRequest)
@@ -109,7 +109,7 @@ page 50108 "Book Lending"
                         LibraryMgt: Codeunit "Library Management";
                     begin
                         RecRef.GetTable(rec);
-                        LibraryMgt.OnCancelForApproval(RecRef);
+                        LibraryMgt.OnCancelWorkflowForApproval(RecRef);
                     end;
                 }
             }
