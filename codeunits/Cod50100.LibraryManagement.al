@@ -1,147 +1,149 @@
+
 /// <summary>
 /// Codeunit Library Management (ID 50100).
 /// </summary>
 codeunit 50100 "Library Management"
 {
-
     /// <summary>
     /// CheckApprovalsWorkflowEnabled.
     /// </summary>
-    /// <param name="Var RecRef">RecordRef.</param>
+    /// <param name="RecRef">VAR RecordRef.</param>
     /// <returns>Return value of type Boolean.</returns>
-    procedure CheckApprovalsWorkflowEnabled(Var RecRef: RecordRef): Boolean
+    procedure CheckApprovalsWorkflowEnabled(var RecRef: RecordRef): Boolean
+    var
+        myInt: Integer;
     begin
-        if not WorkflowMgt.CanExecuteWorkflow(RecRef, GetSendWorkflowCode(RUNWORKFLOWONSENDAPPROVALCODE, RecRef)) then
+        if not WorkflowMgt.CanExecuteWorkflow(RecRef, RunWorkflowOnSendForApprovalCode(RUNWORKFLOWONSENDAPPROVALCODE, RecRef)) then
             Error(NoWorkflowEnabledErr);
         exit(true);
+
     end;
 
     /// <summary>
-    /// GetWorkflowCode.
+    /// RunWorkflowOnSendForApprovalCode.
     /// </summary>
-    /// <param name="WorkflowCode">code[128].</param>
+    /// <param name="ApprovalCode">Code[128].</param>
     /// <param name="RecRef">RecordRef.</param>
     /// <returns>Return value of type Code[128].</returns>
-
-    // Check if the setup is establish in the frontend 
-    procedure GetSendWorkflowCode(WorkflowCode: code[128]; RecRef: RecordRef): Code[128]
+    procedure RunWorkflowOnSendForApprovalCode(ApprovalCode: Code[128]; RecRef: RecordRef): Code[128]
+    var
+        myInt: Integer;
     begin
-        exit(DelChr(StrSubstNo(WorkflowCode, RecRef.Name), '=', ' '));
+        exit(DelChr(StrSubstNo(ApprovalCode, RecRef.Name), '=', ' '))
     end;
 
     /// <summary>
-    /// GetCancelWorkflowCode.
+    /// RunWorkflowOnCancelForApprovalCode.
     /// </summary>
-    /// <param name="WorkflowCode">code[128].</param>
+    /// <param name="ApprovalCode">Code[128].</param>
     /// <param name="RecRef">RecordRef.</param>
     /// <returns>Return value of type Code[128].</returns>
-    procedure GetCancelWorkflowCode(WorkflowCode: code[128]; RecRef: RecordRef): Code[128]
+    procedure RunWorkflowOnCancelForApprovalCode(ApprovalCode: Code[128]; RecRef: RecordRef): Code[128]
+    var
+        myInt: Integer;
     begin
-        exit(StrSubstNo(WorkflowCode, RecRef.Name));
+        exit(StrSubstNo(ApprovalCode, RecRef.Name));
     end;
 
     /// <summary>
     /// OnSendForApproval.
     /// </summary>
-    /// <param name="RecRef">RecordRef.</param>
+    /// <param name="Recref">VAR RecordRef.</param>
     [IntegrationEvent(false, false)]
-    procedure OnSendForApproval(RecRef: RecordRef)
+    procedure OnSendForApproval(var Recref: RecordRef)
     begin
     end;
 
     /// <summary>
     /// OnCancelForApproval.
     /// </summary>
-    /// <param name="RecRef">RecordRef.</param>
+    /// <param name="Recref">VAR RecordRef.</param>
     [IntegrationEvent(false, false)]
-    procedure OnCancelForApproval(RecRef: RecordRef)
+    procedure OnCancelForApproval(var Recref: RecordRef)
     begin
     end;
 
-    //Adding the event to the library
-
+    // add events to the library 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Workflow Event Handling", 'OnAddWorkflowEventsToLibrary', '', false, false)]
     local procedure OnAddWorkflowEventsToLibrary()
     var
-        WorkflowEventHandling: Codeunit "Workflow Event Handling";
-        RecRef: RecordRef;
+        Recref: RecordRef;
     begin
-        WorkflowEventHandling.AddEventToLibrary(GetSendWorkflowCode(RUNWORKFLOWONSENDAPPROVALCODE, RecRef), DATABASE::"Book Lending",
-                GetApprovalDescriptionText(SendForApprovalEventDescTxt, RecRef), 0, false);
-        WorkflowEventHandling.AddEventToLibrary(GetCancelWorkflowCode(RUNWORKFLOWONCANCELAPPROVALCODE, RecRef), DATABASE::"Book Lending",
-           GetApprovalDescriptionText(CancelForApprovalEventDescTxt, RecRef), 0, false);
-
+        WorkflowEventHandling.AddEventToLibrary(RunWorkflowOnSendForApprovalCode(RUNWORKFLOWONSENDAPPROVALCODE, RecRef), Database::"Book Lending",
+        ApprovalEventDescTxt(SendForApprovalEventDescTxt, Recref), 0, false);
+        WorkflowEventHandling.AddEventToLibrary(RunWorkflowOnSendForApprovalCode(RUNWORKFLOWONCANCELAPPROVALCODE, RecRef), Database::"Book Lending",
+       ApprovalEventDescTxt(CancelForApprovalEventDescTxt, Recref), 0, false);
     end;
 
-    local procedure GetApprovalDescriptionText(DescriptionTxt: text[250]; RecRef: RecordRef): text[250]
+    /// <summary>
+    /// ApprovalEventDescTxt.
+    /// </summary>
+    /// <param name="DescriptionTxt">text[250].</param>
+    /// <param name="RecRef">RecordRef.</param>
+    /// <returns>Return value of type text [250].</returns>
+    procedure ApprovalEventDescTxt(DescriptionTxt: text[250]; RecRef: RecordRef): text[250]
     var
+        myInt: Integer;
     begin
-        exit(StrSubstNo(DescriptionTxt, Recref));
+        exit(StrSubstNo(DescriptionTxt, RecRef))
     end;
 
-    // subscribing to the publish events
-
-
-    /// <summary>
-    /// RunWorkflowOnSendForApproval.
-    /// </summary>
-    /// <param name="RecRef">RecordRef.</param>
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Library Management", 'OnSendForApproval', '', false, false)]
-    procedure RunWorkflowOnSendForApproval(RecRef: RecordRef)
+    local procedure RunWorkflowOnSendWorkflowForApproval(RecRef: RecordRef)
     begin
-        WorkflowMgt.HandleEvent(GetSendWorkflowCode(RUNWORKFLOWONSENDAPPROVALCODE, RecRef), Database::"Book Lending");
+        WorkflowMgt.HandleEvent(RunWorkflowOnSendForApprovalCode(RUNWORKFLOWONSENDAPPROVALCODE, RecRef), RecRef);
     end;
 
-    /// <summary>
-    /// RunWorkflowOnCancelForApproval.
-    /// </summary>
-    /// <param name="RecRef">RecordRef.</param>
-    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Library Management", 'OnSendForApproval', '', false, false)]
-    procedure RunWorkflowOnCancelForApproval(RecRef: RecordRef)
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Library Management", 'OnCancelForApproval', '', false, false)]
+    local procedure RunWorkflowOnCancelWorkflowForApproval(RecRef: RecordRef)
     begin
-        WorkflowMgt.HandleEvent(GetCancelWorkflowCode(RUNWORKFLOWONCANCELAPPROVALCODE, RecRef), Database::"Book Lending");
+        WorkflowMgt.HandleEvent(RunWorkflowOnCancelForApprovalCode(RUNWORKFLOWONCANCELAPPROVALCODE, RecRef), RecRef);
     end;
-    // modifying the document state
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Workflow Response Handling", 'OnOpenDocument', '', false, false)]
-    local procedure OnOpenDocument(RecRef: RecordRef; Handled: Boolean)
-    Var
-        Book: Record Book;
+    local procedure OnOpenDocument(RecRef: RecordRef; var Handled: Boolean)
+    var
         BookLending: Record "Book Lending";
     begin
-        case RecRef.number of
+        case RecRef.Number of
             Database::"Book Lending":
                 begin
                     RecRef.SetTable(BookLending);
-                    BookLending.Validate(Status, BookLending.status::Open);
-                    book.Reset();
-                    Book.SetRange(Status, book.Status::Available);
-                    book.Status := book.status::Available;
+                    BookLending.Validate(Status, BookLending.Status::Open);
                     BookLending.Modify(true);
-                    book.Modify(true);
                     Handled := true;
                 end;
-
         end;
-
     end;
 
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.", 'OnSetStatusToPendingApproval', '', false, false)]
     local procedure OnSetStatusToPendingApproval(RecRef: RecordRef; var Variant: Variant; var IsHandled: Boolean)
     var
-
         BookLending: Record "Book Lending";
     begin
-        case
-            RecRef.Number of
+        case RecRef.Number of
             Database::"Book Lending":
                 begin
                     RecRef.SetTable(BookLending);
                     BookLending.Validate(Status, BookLending.Status::Pending);
                     BookLending.Modify(true);
-
+                    Variant := BookLending;
+                    IsHandled := true;
                 end;
+        end;
+    end;
 
+    [EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.", 'OnPopulateApprovalEntryArgument', '', false, false)]
+    local procedure OnPopulateApprovalEntryArgument(var RecRef: RecordRef; var ApprovalEntryArgument: Record "Approval Entry"; WorkflowStepInstance: Record "Workflow Step Instance")
+    var
+        BookLending: Record "Book Lending";
+    begin
+        case RecRef.Number of
+            DataBase::"Book Lending":
+                begin
+                    RecRef.SetTable(BookLending);
+                    ApprovalEntryArgument."Document No." := BookLending."Lending No.";
+                end;
         end;
     end;
 
@@ -149,8 +151,6 @@ codeunit 50100 "Library Management"
     local procedure OnReleaseDocument(RecRef: RecordRef; var Handled: Boolean)
     var
         BookLending: Record "Book Lending";
-        BookLendingLn: record "Book Lending Line";
-
     begin
         case RecRef.Number of
             DataBase::"Book Lending":
@@ -158,15 +158,7 @@ codeunit 50100 "Library Management"
                     RecRef.SetTable(BookLending);
                     BookLending.Validate(Status, BookLending.Status::Approved);
                     BookLending.Modify(true);
-                    BookLendingLn.Reset();
-                    BookLendingLn.SetRange(Status, BookLendingLn.Status::Available);
-                    if BookLendingLn.FindSet() then begin
-                        repeat
-                            BookLendingLn.Status := BookLendingLn.Status::Approved;
-                            BookLendingLn.Modify(true);
-                        until BookLendingLn.Next() = 0;
-                        Handled := true;
-                    end;
+                    Handled := true;
                 end;
         end;
     end;
@@ -176,8 +168,7 @@ codeunit 50100 "Library Management"
     var
         RecRef: RecordRef;
         BookLending: Record "Book Lending";
-        BookLendingLn: record "Book Lending Line";
-
+        v: Codeunit "Record Restriction Mgt.";
     begin
         case ApprovalEntry."Table ID" of
             DataBase::"Book Lending":
@@ -190,7 +181,10 @@ codeunit 50100 "Library Management"
         end;
     end;
 
+
+
     var
+        WorkflowEventHandling: Codeunit "Workflow Event Handling";
         WorkflowMgt: Codeunit "Workflow Management";
         NoWorkflowEnabledErr:
                 Label 'No approval workflow for this record type is enabled.';
