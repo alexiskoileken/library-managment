@@ -8,6 +8,7 @@ page 50110 "Book Lending Line"
     PageType = ListPart;
     SourceTable = "Book Lending Line";
 
+
     layout
     {
         area(Content)
@@ -34,4 +35,13 @@ page 50110 "Book Lending Line"
             }
         }
     }
+    trigger OnAfterGetCurrRecord()
+    var
+        myInt: Integer;
+    begin
+        if Rec.Status = Rec.Status::Available then
+            CurrPage.Editable(true) else
+            CurrPage.Editable(false);
+    end;
+
 }

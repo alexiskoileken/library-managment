@@ -6,6 +6,7 @@ table 50106 "Book Lending Line"
     Caption = 'Book Lending Line';
     DataClassification = ToBeClassified;
 
+
     fields
     {
         field(1; "Book No."; Code[20])
@@ -42,7 +43,7 @@ table 50106 "Book Lending Line"
         }
         field(5; Status; option)
         {
-            OptionMembers = Available,Booked,Approved,Returned;
+            OptionMembers = Available,Booked,Approved;
             Editable = false;
         }
     }

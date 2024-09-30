@@ -77,7 +77,7 @@ codeunit 50100 "Library Management"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Approvals Mgmt.", 'OnSetStatusToPendingApproval', '', false, false)]
     local procedure OnSetStatusToPendingApproval(RecRef: RecordRef; var Variant: Variant; var IsHandled: Boolean)
     var
-        BookLending: Record "book Lending";
+
     begin
         case RecRef.Number of
             Database::"book Lending":
@@ -87,6 +87,14 @@ codeunit 50100 "Library Management"
                     BookLending.Modify(true);
                     Variant := BookLending;
                     IsHandled := true;
+                    BookLendingLn.reset();
+                    Booklendingln.setrange(Status, Booklendingln.status::Available);
+                    if BookLendingLn.FindSet() then begin
+                        repeat
+                            BookLendingLn.status := Booklendingln.status::Booked;
+                            BookLendingLn.Modify(true)
+                        until BookLendingLn.Next() = 0;
+                    end;
                 end;
         end;
     end;
@@ -108,7 +116,7 @@ codeunit 50100 "Library Management"
     [EventSubscriber(ObjectType::Codeunit, Codeunit::"Workflow Response Handling", 'OnReleaseDocument', '', false, false)]
     local procedure OnReleaseDocument(RecRef: RecordRef; var Handled: Boolean)
     var
-        BookLending: Record "book Lending";
+
     begin
         case RecRef.Number of
             DataBase::"book Lending":
@@ -116,6 +124,18 @@ codeunit 50100 "Library Management"
                     RecRef.SetTable(BookLending);
                     BookLending.Validate(Status, BookLending.Status::Approved);
                     BookLending.Modify(true);
+                    BookLendingLn.reset();
+                    Books.reset();
+                    Booklendingln.setrange(Status, Booklendingln.status::Booked);
+                    Books.setrange(Status, Books.status::Available);
+                    if BookLendingLn.FindSet() then begin
+                        repeat
+                            BookLendingLn.status := Booklendingln.status::Approved;
+                            books.status := books.status::booked;
+                            BookLendingLn.Modify(true);
+                            books.Modify(true);
+                        until BookLendingLn.Next() = 0;
+                    end;
                     Handled := true;
                 end;
         end;
@@ -125,8 +145,7 @@ codeunit 50100 "Library Management"
     local procedure OnRejectApprovalRequest(var ApprovalEntry: Record "Approval Entry")
     var
         RecRef: RecordRef;
-        BookLending: Record "book Lending";
-        v: Codeunit "Record Restriction Mgt.";
+
     begin
         case ApprovalEntry."Table ID" of
             DataBase::"book Lending":
@@ -134,6 +153,19 @@ codeunit 50100 "Library Management"
                     if BookLending.Get(ApprovalEntry."Document No.") then begin
                         BookLending.Validate(Status, BookLending.Status::Rejected);
                         BookLending.Modify(true);
+                        BookLendingLn.reset();
+                        books.reset();
+                        BookLendingLn.SetRange(Status, BookLendingLn.Status::Approved);
+                        books.SetRange(Status, books.Status::Booked);
+                        if BookLendingLn.findset() then begin
+                            repeat
+                                BookLendingLn.status := Booklendingln.status::Available;
+                                books.status := books.status::Available;
+                                BookLendingLn.Modify(true);
+                                books.Modify(true);
+                            until BookLendingLn.Next() = 0;
+
+                        end
                     end;
                 end;
         end;
@@ -148,6 +180,9 @@ codeunit 50100 "Library Management"
         NoWorkflowEnabledErr: Label 'No approval workflow for this record type is enabled.';
         WorkflowSendForApprovalEventDescTxt: Label 'Approval of %1 is requested.';
         WorkflowCancelForApprovalEventDescTxt: Label 'Approval of %1 is canceled.';
+        BookLendingLn: Record "Book Lending Line";
+        BookLending: Record "book Lending";
+        books: record book;
 
 
 
