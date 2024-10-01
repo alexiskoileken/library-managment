@@ -7,12 +7,13 @@ report 50100 "Books report"
     Caption = 'Books report';
     UsageCategory = ReportsAndAnalysis;
     DefaultLayout = RDLC;
-    RDLCLayout = 'Books.rdl';
+    RDLCLayout = 'Layouts/Books.rdl';
     dataset
     {
         dataitem(Book; Book)
         {
             RequestFilterFields = "Book Id", Status;
+            RequestFilterHeading = 'Options';
             column(logo; companyinf.Picture)
             {
             }
