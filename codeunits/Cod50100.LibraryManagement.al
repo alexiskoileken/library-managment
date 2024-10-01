@@ -88,12 +88,16 @@ codeunit 50100 "Library Management"
                     Variant := BookLending;
                     IsHandled := true;
                     BookLendingLn.reset();
-                    Booklendingln.setrange(Status, Booklendingln.status::Available);
+                    Booklendingln.setrange("Lending ID", Booklending."Lending No.");
                     if BookLendingLn.FindSet() then begin
                         repeat
-                            BookLendingLn.status := Booklendingln.status::Booked;
-                            BookLendingLn.Modify(true)
+                            if books.Get(BookLendingLn."Book No.") then begin
+                                books.status := books.status::"pending approval";
+                                books.modify(true)
+                            end
                         until BookLendingLn.Next() = 0;
+
+
                     end;
                 end;
         end;
@@ -125,15 +129,14 @@ codeunit 50100 "Library Management"
                     BookLending.Validate(Status, BookLending.Status::Approved);
                     BookLending.Modify(true);
                     BookLendingLn.reset();
-                    Books.reset();
-                    Booklendingln.setrange(Status, Booklendingln.status::Booked);
-                    Books.setrange(Status, Books.status::Available);
+                    Booklendingln.setrange("Lending ID", Booklending."Lending No.");
                     if BookLendingLn.FindSet() then begin
                         repeat
-                            BookLendingLn.status := Booklendingln.status::Approved;
-                            books.status := books.status::booked;
-                            BookLendingLn.Modify(true);
-                            books.Modify(true);
+                            books.Reset();
+                            if books.Get(BookLendingLn."Book No.") then begin
+                                books.status := books.status::booked;
+                                books.modify(true);
+                            end
                         until BookLendingLn.Next() = 0;
                     end;
                     Handled := true;
@@ -154,15 +157,13 @@ codeunit 50100 "Library Management"
                         BookLending.Validate(Status, BookLending.Status::Rejected);
                         BookLending.Modify(true);
                         BookLendingLn.reset();
-                        books.reset();
-                        BookLendingLn.SetRange(Status, BookLendingLn.Status::Approved);
-                        books.SetRange(Status, books.Status::Booked);
+                        BookLendingLn.SetRange("Lending ID", BookLending."Lending No.");
                         if BookLendingLn.findset() then begin
                             repeat
-                                BookLendingLn.status := Booklendingln.status::Available;
-                                books.status := books.status::Available;
-                                BookLendingLn.Modify(true);
-                                books.Modify(true);
+                                if books.Get(booklendingln."Book No.") then begin
+                                    Books.status := Books.status::Available;
+                                    Books.Modify(true);
+                                end
                             until BookLendingLn.Next() = 0;
 
                         end
@@ -175,14 +176,22 @@ codeunit 50100 "Library Management"
 
         WorkflowMgt: Codeunit "Workflow Management";
 
-        RUNWORKFLOWONSENDFORAPPROVALCODE: Label 'RUNWORKFLOWONSEND%1FORAPPROVAL';
-        RUNWORKFLOWONCANCELFORAPPROVALCODE: Label 'RUNWORKFLOWONCANCEL%1FORAPPROVAL';
-        NoWorkflowEnabledErr: Label 'No approval workflow for this record type is enabled.';
-        WorkflowSendForApprovalEventDescTxt: Label 'Approval of %1 is requested.';
-        WorkflowCancelForApprovalEventDescTxt: Label 'Approval of %1 is canceled.';
-        BookLendingLn: Record "Book Lending Line";
-        BookLending: Record "book Lending";
-        books: record book;
+        RUNWORKFLOWONSENDFORAPPROVALCODE:
+                Label 'RUNWORKFLOWONSEND%1FORAPPROVAL';
+        RUNWORKFLOWONCANCELFORAPPROVALCODE:
+                Label 'RUNWORKFLOWONCANCEL%1FORAPPROVAL';
+        NoWorkflowEnabledErr:
+                Label 'No approval workflow for this record type is enabled.';
+        WorkflowSendForApprovalEventDescTxt:
+                Label 'Approval of %1 is requested.';
+        WorkflowCancelForApprovalEventDescTxt:
+                Label 'Approval of %1 is canceled.';
+        BookLendingLn:
+                Record "Book Lending Line";
+        BookLending:
+                Record "book Lending";
+        books:
+                record book;
 
 
 

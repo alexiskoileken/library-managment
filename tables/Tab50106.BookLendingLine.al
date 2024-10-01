@@ -41,11 +41,6 @@ table 50106 "Book Lending Line"
             Caption = 'Lending ID';
             Editable = false;
         }
-        field(5; Status; option)
-        {
-            OptionMembers = Available,Booked,Approved;
-            Editable = false;
-        }
     }
     keys
     {

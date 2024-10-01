@@ -28,7 +28,7 @@ table 50100 Book
         }
         field(5; Status; Option)
         {
-            OptionMembers = Available,Booked;
+            OptionMembers = Available,"pending approval",Booked;
             Editable = false;
         }
         field(6; "Created At"; Date)

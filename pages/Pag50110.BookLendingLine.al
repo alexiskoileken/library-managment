@@ -27,21 +27,9 @@ page 50110 "Book Lending Line"
                 {
                     ToolTip = 'Specifies the value of the ISNB field.', Comment = '%';
                 }
-                field(Status; Rec.Status)
-                {
-
-                }
 
             }
         }
     }
-    trigger OnAfterGetCurrRecord()
-    var
-        myInt: Integer;
-    begin
-        if Rec.Status = Rec.Status::Available then
-            CurrPage.Editable(true) else
-            CurrPage.Editable(false);
-    end;
 
 }

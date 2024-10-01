@@ -91,6 +91,7 @@ page 50108 "Book Lending"
                         RecRef.GetTable(Rec);
                         if LibraryMgt.CheckApprovalsWorkflowEnabled(RecRef) then
                             LibraryMgt.OnSendWorkflowForApproval(RecRef);
+                        CurrPage.Close();
                     end;
                 }
                 action(CancelApprovalRequest)
@@ -129,6 +130,7 @@ page 50108 "Book Lending"
                     PromotedCategory = New;
                     Visible = OpenApprovalEntriesExistCurrUser;
                     trigger OnAction()
+
                     begin
                         ApprovalsMgmt.ApproveRecordApprovalRequest(Rec.RecordId);
                     end;
@@ -211,5 +213,6 @@ page 50108 "Book Lending"
         , HasApprovalEntries : Boolean;
         books: Record Book;
         ApprovalsMgmt: Codeunit "Approvals Mgmt.";
+
 }
 
