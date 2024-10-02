@@ -14,14 +14,9 @@ page 50106 Library
             {
                 ApplicationArea = basic, suite;
             }
-            part(Control99; "Finance Performance")
+            part(custom; "Library Activities")
             {
-                ApplicationArea = Basic, Suite;
-                Visible = false;
-            }
-            part(Control1902304208; "Accountant Activities")
-            {
-                ApplicationArea = Basic, Suite;
+                ApplicationArea = basic, suite;
             }
             part("User Tasks Activities"; "User Tasks Activities")
             {
