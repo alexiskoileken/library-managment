@@ -7,11 +7,6 @@ table 50105 "Book Lending"
     DataClassification = ToBeClassified;
     LookupPageId = "Book lendings";
     DrillDownPageId = "Book Lending";
-
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
     fields
     {
         field(1; "Lending No."; Code[20])
@@ -72,7 +67,6 @@ table 50105 "Book Lending"
             Caption = 'Lended by ';
             Editable = false;
         }
-<<<<<<< HEAD
         field(10; "Number of books"; Integer)
         {
             FieldClass = FlowField;
@@ -82,8 +76,6 @@ table 50105 "Book Lending"
         {
             DataClassification = ToBeClassified;
         }
-=======
->>>>>>> origin/main
     }
     keys
     {

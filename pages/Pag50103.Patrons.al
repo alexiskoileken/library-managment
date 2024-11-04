@@ -42,7 +42,6 @@ page 50103 Patrons
                 }
             }
         }
-<<<<<<< HEAD
         area(FactBoxes)
         {
             part(Detailsfact; "Patron factbox")
@@ -59,7 +58,5 @@ page 50103 Patrons
                 ApplicationArea = all;
             }
         }
-=======
->>>>>>> origin/main
     }
 }

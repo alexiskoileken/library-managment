@@ -49,14 +49,12 @@ table 50101 Patron
             OptionMembers = NoBook,Hasbook;
             Editable = false;
         }
-<<<<<<< HEAD
+
         field(10; Picture; Media)
         {
             DataClassification = ToBeClassified;
         }
 
-=======
->>>>>>> origin/main
     }
     keys
     {
@@ -88,10 +86,10 @@ table 50101 Patron
         NoseriesMgt.InitSeries(LibrarySetup."Patron ID", LibrarySetup."Patron ID", WorkDate(), "Patron ID", LibrarySetup."Patron ID");
 
     end;
-<<<<<<< HEAD
+
 
     var
         BookLending: Record "Book Lending";
-=======
->>>>>>> origin/main
+
+
 }

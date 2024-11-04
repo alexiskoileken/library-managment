@@ -18,20 +18,14 @@ table 50106 "Book Lending Line"
                 Books: Record Book;
                 UpdateTime: Record "Book Lending";
             begin
-<<<<<<< HEAD
                 CustomMgt.PatronHasBook();
-=======
->>>>>>> origin/main
+
                 Books.Reset();
                 if Books.Get("Book No.") then begin
                     Title := Books."Title ";
                     ISNB := Books.ISBN;
                     Books.Modify()
                 end;
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
             end;
         }
         field(2; Title; text[50])
@@ -49,10 +43,6 @@ table 50106 "Book Lending Line"
             Caption = 'Lending ID';
             Editable = false;
         }
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
     }
     keys
     {
@@ -61,9 +51,6 @@ table 50106 "Book Lending Line"
             Clustered = true;
         }
     }
-<<<<<<< HEAD
     var
         CustomMgt: Codeunit "Custom Management";
-=======
->>>>>>> origin/main
 }

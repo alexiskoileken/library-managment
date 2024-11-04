@@ -8,10 +8,6 @@ page 50108 "Book Lending"
     PageType = Card;
     SourceTable = "Book Lending";
     RefreshOnActivate = true;
-<<<<<<< HEAD
-    
-=======
->>>>>>> origin/main
     layout
     {
         area(Content)
@@ -211,16 +207,12 @@ page 50108 "Book Lending"
         HasApprovalEntries := ApprovalsMgmt.HasApprovalEntries(Rec.RecordId);
     end;
 
-<<<<<<< HEAD
     trigger OnClosePage()
     var
         CustomMgt: Codeunit "Custom Management";
     begin
         CustomMgt.PatronHasBook();
     end;
-
-=======
->>>>>>> origin/main
 
     var
         OpenApprovalEntriesExistCurrUser, OpenApprovalEntriesExist, CanCancelApprovalForRecord
