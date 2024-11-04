@@ -49,10 +49,6 @@ page 50102 Patron
                 {
                     ToolTip = 'Specifies the value of the modified date-time field.', Comment = '%';
                 }
-                field(Status; Rec.Status)
-                {
-
-                }
             }
         }
         area(FactBoxes)
@@ -60,6 +56,11 @@ page 50102 Patron
             part(partPicture; "Patron Picture")
             {
                 ApplicationArea = all;
+                SubPageLink = "Patron ID" = field("Patron ID");
+            }
+            part(partstats; "Patron Statistics")
+            {
+                ApplicationArea = ALL;
                 SubPageLink = "Patron ID" = field("Patron ID");
             }
             systempart(link; Links)
