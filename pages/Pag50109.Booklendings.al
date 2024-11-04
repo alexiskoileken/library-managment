@@ -9,7 +9,10 @@ page 50109 "Book lendings"
     SourceTable = "Book Lending";
     CardPageId = "Book Lending";
     DeleteAllowed = false;
+<<<<<<< HEAD
     UsageCategory = Lists;
+=======
+>>>>>>> origin/main
 
 
     layout

@@ -7,7 +7,10 @@ page 50102 Patron
     Caption = 'Patron';
     PageType = Card;
     SourceTable = Patron;
+<<<<<<< HEAD
     RefreshOnActivate = true;
+=======
+>>>>>>> origin/main
 
     layout
     {
@@ -55,6 +58,7 @@ page 50102 Patron
                 }
             }
         }
+<<<<<<< HEAD
         area(FactBoxes)
         {
             part(partPicture; "Patron Picture")
@@ -76,4 +80,8 @@ page 50102 Patron
     var
         CustomMgt: Codeunit "Custom Management";
 
+=======
+    }
+
+>>>>>>> origin/main
 }
